@@ -24,9 +24,13 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 import pe.edu.idat.apppelotearidat.Adapters.NoticiasAdapter;
+import pe.edu.idat.apppelotearidat.Adapters.ReservasAdapter;
 import pe.edu.idat.apppelotearidat.Modelo.Noticia;
+import pe.edu.idat.apppelotearidat.Modelo.Reserva;
 
 
 /**
@@ -51,8 +55,10 @@ public class FragmentDashboard extends Fragment {
 
     private RecyclerView rvDatos, rvDatosReservas;
     private NoticiasAdapter adapter;
-    private NoticiasAdapter adapterReserva;
+    private ReservasAdapter adapterReserva;
     ArrayList<Noticia> vDatos;
+    ArrayList<Reserva> vDatosReserva;
+
     private RequestQueue mQueue;
 
     public FragmentDashboard() {
@@ -94,14 +100,15 @@ public class FragmentDashboard extends Fragment {
         /*RESERVASSS*/
         rvDatosReservas = view.findViewById(R.id.rvDatosReservas);
         rvDatosReservas.setLayoutManager(new LinearLayoutManager(getActivity()));
-        adapterReserva = new NoticiasAdapter(getActivity());
+        adapterReserva = new ReservasAdapter(getActivity());
         rvDatosReservas.setAdapter(adapterReserva);
-
+        vDatosReserva = new ArrayList<Reserva>();
 
         //Instanciamos la cola de peticiones.
         mQueue = Volley.newRequestQueue(getActivity());
         //Llamar al método ConsumirWS
         ConsumirWS();
+        ConsumirWSReservas();
         return view;
         //return inflater.inflate(R.layout.fragment_fragment_dashboard, container, false);
     }
@@ -118,7 +125,7 @@ public class FragmentDashboard extends Fragment {
         String url = "http://luis.wordlatin.com/RestfulService/noticias.php";
         //Instanciar el objeto request para que sea agregado
         // a la cola de requests.
-        JsonArrayRequest request = new JsonArrayRequest(
+        JsonArrayRequest requestNoticias = new JsonArrayRequest(
                 Request.Method.GET, url, null,
                 new Response.Listener<JSONArray>() {
                     @Override
@@ -132,7 +139,6 @@ public class FragmentDashboard extends Fragment {
 
                             }
                             adapter.agregarElemento(vDatos);
-                            adapterReserva.agregarElemento(vDatos);
                         }catch (JSONException ex){
                             ex.printStackTrace();
                         }
@@ -146,7 +152,51 @@ public class FragmentDashboard extends Fragment {
                     }
                 }
         );
-        mQueue.add(request);
+        mQueue.add(requestNoticias);
+    }
+
+    private void ConsumirWSReservas() {
+        //Inicializar el URL del servicio web.
+        String url = "http://luis.wordlatin.com/RestfulService/reservas.php";
+        Map<String, Integer> params = new HashMap();
+        params.put("idpersona", 1);
+        JSONObject parameters = new JSONObject(params);
+        JSONArray arrayreq = new JSONArray();
+        arrayreq.put(parameters);
+        //Instanciar el objeto request para que sea agregado
+        // a la cola de requests.
+        JsonArrayRequest requestReserva = new JsonArrayRequest(
+                Request.Method.POST, url, arrayreq,
+                new Response.Listener<JSONArray>() {
+                    @Override
+                    public void onResponse(JSONArray response) {
+                        try {
+                            for(int i = 0; i < response.length(); i++){
+                                JSONObject objImagen = response.getJSONObject(i);
+                                Log.i("INFORES", objImagen.getString("nombresede"));
+                                vDatosReserva.add(new Reserva(objImagen.getString("nombresede"),
+                                        objImagen.getString("nombreamb"),
+                                        objImagen.getString("urlimagen"),
+                                        objImagen.getString("HoraIni"),
+                                        objImagen.getString("HoraFin"),
+                                        objImagen.getString("fecha")));
+
+                            }
+                            adapterReserva.agregarElemento(vDatosReserva);
+                        }catch (JSONException ex){
+                            ex.printStackTrace();
+                        }
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        error.printStackTrace();
+
+                    }
+                }
+        );
+        mQueue.add(requestReserva);
     }
 
 

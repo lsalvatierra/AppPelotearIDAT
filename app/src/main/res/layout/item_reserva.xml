@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v7.widget.CardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/cardcontres"
+    app:cardCornerRadius="4dp"
+    app:cardMaxElevation="2dp"
+    app:cardElevation="1dp"
+    app:cardUseCompatPadding="true">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center">
+        <ImageView
+            android:layout_width="120dp"
+            android:layout_height="90dp"
+            android:id="@+id/ivImagen"
+            android:src="@mipmap/ic_launcher"/>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:gravity="center">
+            <TextView
+                android:id="@+id/tvSede"
+                android:layout_width="match_parent"
+                android:textStyle="bold"
+                android:layout_height="wrap_content" />
+            <TextView
+                android:id="@+id/tvDesLosa"
+                android:layout_width="match_parent"
+                android:textStyle="bold"
+                android:layout_height="wrap_content" />
+            <TextView
+                android:id="@+id/tvFecha"
+                android:layout_width="match_parent"
+                android:textStyle="bold"
+                android:layout_height="wrap_content" />
+            <TextView
+                android:id="@+id/tvHoraIni"
+                android:layout_width="match_parent"
+                android:textStyle="bold"
+                android:layout_height="wrap_content" />
+            <TextView
+                android:id="@+id/tvHoraFin"
+                android:layout_width="match_parent"
+                android:textStyle="bold"
+                android:layout_height="wrap_content" />
+        </LinearLayout>
+
+    </LinearLayout>
+
+</android.support.v7.widget.CardView>
