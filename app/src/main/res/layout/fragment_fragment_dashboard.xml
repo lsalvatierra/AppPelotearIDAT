@@ -11,7 +11,14 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical">
-
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/colorBlanco"
+            android:textColor="@color/colorNegro"
+            android:textStyle="bold"
+            android:textSize="24dp"
+            android:text="@string/valtvNoticias"/>
         <android.support.v7.widget.RecyclerView
             android:id="@+id/rvDatos"
             android:layout_width="match_parent"
@@ -25,7 +32,6 @@
             android:textColor="@color/colorNegro"
             android:textStyle="bold"
             android:textSize="24dp"
-
             android:text="@string/valtvReserva"/>
 
         <android.support.v7.widget.RecyclerView

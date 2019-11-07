@@ -1,6 +1,7 @@
 package pe.edu.idat.apppelotearidat;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -31,6 +32,8 @@ import pe.edu.idat.apppelotearidat.Adapters.NoticiasAdapter;
 import pe.edu.idat.apppelotearidat.Adapters.ReservasAdapter;
 import pe.edu.idat.apppelotearidat.Modelo.Noticia;
 import pe.edu.idat.apppelotearidat.Modelo.Reserva;
+
+import static android.content.Context.MODE_PRIVATE;
 
 
 /**
@@ -103,12 +106,13 @@ public class FragmentDashboard extends Fragment {
         adapterReserva = new ReservasAdapter(getActivity());
         rvDatosReservas.setAdapter(adapterReserva);
         vDatosReserva = new ArrayList<Reserva>();
-
+        SharedPreferences preferences = getActivity().getSharedPreferences("appPelotear", MODE_PRIVATE);
+        Integer idPersona = Integer.parseInt(preferences.getString("idpersona", ""));
         //Instanciamos la cola de peticiones.
         mQueue = Volley.newRequestQueue(getActivity());
         //Llamar al método ConsumirWS
         ConsumirWS();
-        ConsumirWSReservas();
+        ConsumirWSReservas(idPersona);
         return view;
         //return inflater.inflate(R.layout.fragment_fragment_dashboard, container, false);
     }
@@ -155,11 +159,11 @@ public class FragmentDashboard extends Fragment {
         mQueue.add(requestNoticias);
     }
 
-    private void ConsumirWSReservas() {
+    private void ConsumirWSReservas(int idPersona) {
         //Inicializar el URL del servicio web.
         String url = "http://luis.wordlatin.com/RestfulService/reservas.php";
         Map<String, Integer> params = new HashMap();
-        params.put("idpersona", 1);
+        params.put("idpersona", idPersona);
         JSONObject parameters = new JSONObject(params);
         JSONArray arrayreq = new JSONArray();
         arrayreq.put(parameters);
