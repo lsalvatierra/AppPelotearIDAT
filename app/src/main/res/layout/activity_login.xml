@@ -37,6 +37,7 @@
                 android:id="@+id/etUsuario"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:textColor="@color/colorBlanco"
                 android:hint="@string/valetUsuario" />
         </android.support.design.widget.TextInputLayout>
 
@@ -54,6 +55,7 @@
                 android:layout_height="wrap_content"
                 android:hint="@string/valetPassword"
                 android:inputType="textPassword"
+                android:textColor="@color/colorBlanco"
                 android:textStyle="bold" />
         </android.support.design.widget.TextInputLayout>
 
@@ -67,6 +69,12 @@
             android:textColor="@drawable/btn_text"
             android:background="@drawable/btn_circular"
             android:text="@string/valbtnLogin" />
+        <ProgressBar
+            android:id="@+id/progbar"
+            style="?android:attr/progressBarStyle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:visibility="gone" />
 
     </LinearLayout>
 

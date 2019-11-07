@@ -30,14 +30,14 @@ FragmentReserva.OnFragmentInteractionListener{
                 case R.id.navigation_home:
                     adminFragment.beginTransaction()
                             .replace(R.id.main_container,
-                                    new FragmentDashboard()).commit();
+                                    new FragmentReserva()).commit();
                     //mTextMessage.setText(R.string.title_home);
                     return true;
                 case R.id.navigation_dashboard:
                     //mTextMessage.setText(R.string.title_dashboard);
                     adminFragment.beginTransaction()
                             .replace(R.id.main_container,
-                                    new FragmentReserva()).commit();
+                                    new FragmentDashboard()).commit();
                     return true;
                 case R.id.navigation_notifications:
                     //mTextMessage.setText(R.string.title_notifications);

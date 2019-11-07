@@ -4,9 +4,29 @@ import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonArrayRequest;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.Volley;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.ArrayList;
+
+import pe.edu.idat.apppelotearidat.Adapters.NoticiasAdapter;
+import pe.edu.idat.apppelotearidat.Modelo.Noticia;
 
 
 /**
@@ -29,18 +49,16 @@ public class FragmentDashboard extends Fragment {
 
     private OnFragmentInteractionListener mListener;
 
+    private RecyclerView rvDatos, rvDatosReservas;
+    private NoticiasAdapter adapter;
+    private NoticiasAdapter adapterReserva;
+    ArrayList<Noticia> vDatos;
+    private RequestQueue mQueue;
+
     public FragmentDashboard() {
         // Required empty public constructor
     }
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment FragmentDashboard.
-     */
     // TODO: Rename and change types and number of parameters
     public static FragmentDashboard newInstance(String param1, String param2) {
         FragmentDashboard fragment = new FragmentDashboard();
@@ -64,7 +82,28 @@ public class FragmentDashboard extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_fragment_dashboard, container, false);
+        View view = inflater.inflate(R.layout.fragment_fragment_dashboard, container, false);
+
+        rvDatos = view.findViewById(R.id.rvDatos);
+        rvDatos.setLayoutManager(new LinearLayoutManager(
+                getActivity(), LinearLayoutManager.HORIZONTAL, false
+        ));
+        adapter = new NoticiasAdapter(getActivity());
+        rvDatos.setAdapter(adapter);
+        vDatos = new ArrayList<Noticia>();
+        /*RESERVASSS*/
+        rvDatosReservas = view.findViewById(R.id.rvDatosReservas);
+        rvDatosReservas.setLayoutManager(new LinearLayoutManager(getActivity()));
+        adapterReserva = new NoticiasAdapter(getActivity());
+        rvDatosReservas.setAdapter(adapterReserva);
+
+
+        //Instanciamos la cola de peticiones.
+        mQueue = Volley.newRequestQueue(getActivity());
+        //Llamar al método ConsumirWS
+        ConsumirWS();
+        return view;
+        //return inflater.inflate(R.layout.fragment_fragment_dashboard, container, false);
     }
 
     // TODO: Rename method, update argument and hook method into UI event
@@ -74,33 +113,44 @@ public class FragmentDashboard extends Fragment {
         }
     }
 
-    @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        if (context instanceof OnFragmentInteractionListener) {
-            mListener = (OnFragmentInteractionListener) context;
-        } else {
-            throw new RuntimeException(context.toString()
-                    + " must implement OnFragmentInteractionListener");
-        }
+    private void ConsumirWS() {
+        //Inicializar el URL del servicio web.
+        String url = "http://luis.wordlatin.com/RestfulService/noticias.php";
+        //Instanciar el objeto request para que sea agregado
+        // a la cola de requests.
+        JsonArrayRequest request = new JsonArrayRequest(
+                Request.Method.GET, url, null,
+                new Response.Listener<JSONArray>() {
+                    @Override
+                    public void onResponse(JSONArray response) {
+                        try {
+                            for(int i = 0; i < response.length(); i++){
+                                JSONObject objImagen = response.getJSONObject(i);
+                                Log.i("INFO", objImagen.getString("titulo"));
+                                vDatos.add(new Noticia(objImagen.getString("titulo"),
+                                        objImagen.getString("urlimagen")));
+
+                            }
+                            adapter.agregarElemento(vDatos);
+                            adapterReserva.agregarElemento(vDatos);
+                        }catch (JSONException ex){
+                            ex.printStackTrace();
+                        }
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        error.printStackTrace();
+
+                    }
+                }
+        );
+        mQueue.add(request);
     }
 
-    @Override
-    public void onDetach() {
-        super.onDetach();
-        mListener = null;
-    }
 
-    /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     * <p>
-     * See the Android Training lesson <a href=
-     * "http://developer.android.com/training/basics/fragments/communicating.html"
-     * >Communicating with Other Fragments</a> for more information.
-     */
+
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
